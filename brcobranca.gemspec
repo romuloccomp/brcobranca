@@ -20,6 +20,8 @@ Gem::Specification.new do |gem|
   gem.requirements = ['GhostScript > 9.0, para gear PDF e código de Barras']
 
   # Gems that must be intalled for sift to work
+  gem.add_dependency 'chunky_png'
+  gem.add_dependency 'barby'
   gem.add_dependency 'rghost', '0.9.5'
   gem.add_dependency 'rghost_barcode', '~> 0.9'
   gem.add_dependency 'parseline', '~> 1.0.3'

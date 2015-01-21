@@ -48,6 +48,10 @@ module Brcobranca
       # <b>OPCIONAL</b>: Código utilizado para identificar o tipo de serviço cobrado
       attr_accessor :codigo_servico
       # <b>OPCIONAL</b>: Utilizado para mostrar alguma informação ao sacado
+      attr_accessor :demonstrativo
+      # <b>OPCIONAL</b>: Utilizado para mostrar alguma informação ao sacado
+      attr_accessor :instrucoes
+      # <b>OPCIONAL</b>: Utilizado para mostrar alguma informação ao sacado
       attr_accessor :instrucao1
       # <b>OPCIONAL</b>: Utilizado para mostrar alguma informação ao sacado
       attr_accessor :instrucao2
@@ -97,6 +101,16 @@ module Brcobranca
       # @return [Path] Caminho para o arquivo de logotipo do banco.
       def logotipo
         File.join(File.dirname(__FILE__), '..', 'arquivos', 'logos', "#{class_name}.eps")
+      end
+
+      # Logotipo do banco
+      # @return [Path] Caminho para o arquivo de logotipo do banco.
+      def logotipo_png
+        "#{class_name}.png"
+      end
+
+      def classe
+        class_name
       end
 
       # Dígito verificador do banco

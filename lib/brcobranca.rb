@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 $LOAD_PATH.push File.join(File.dirname(__FILE__))
+require 'brcobranca/engine'
 require 'brcobranca/calculo'
 require 'brcobranca/limpeza'
 require 'brcobranca/formatacao'
@@ -104,8 +105,9 @@ module Brcobranca
 
     # Módulos para classes de template
     module Template
-      autoload :Base,   'brcobranca/boleto/template/base'
-      autoload :Rghost, 'brcobranca/boleto/template/rghost'
+      autoload :Base,        'brcobranca/boleto/template/base'
+      autoload :Html,        'brcobranca/boleto/template/html'
+      autoload :Rghost,      'brcobranca/boleto/template/rghost'
       autoload :RghostCarne, 'brcobranca/boleto/template/rghost_carne'
     end
   end
@@ -114,7 +116,7 @@ module Brcobranca
   module Retorno
     autoload :Base,           'brcobranca/retorno/base'
     autoload :RetornoCbr643,  'brcobranca/retorno/retorno_cbr643'
-    autoload :RetornoCnab240,  'brcobranca/retorno/retorno_cnab240'
-    autoload :RetornoCnab400,  'brcobranca/retorno/retorno_cnab400'
+    autoload :RetornoCnab240, 'brcobranca/retorno/retorno_cnab240'
+    autoload :RetornoCnab400, 'brcobranca/retorno/retorno_cnab400'
   end
 end
