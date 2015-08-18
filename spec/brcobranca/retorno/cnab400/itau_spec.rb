@@ -1,13 +1,12 @@
 # -*- encoding: utf-8 -*-
 require 'spec_helper'
 
-describe Brcobranca::Retorno::RetornoCnab400 do
-  before(:each) do
-    @arquivo = File.join(File.dirname(__FILE__), '..', 'arquivos', 'CNAB400.RET')
+RSpec.describe Brcobranca::Retorno::Cnab400::Itau do
+  before do
+    @arquivo = File.join(File.dirname(__FILE__), '..', '..', '..', 'arquivos', 'CNAB400ITAU.RET')
   end
 
-  it 'Ignora primeira linha que é header' do
-    pagamentos = described_class.load_lines(@arquivo)
+  it 'Ignora primeira linha que é header' do pagamentos = described_class.load_lines(@arquivo)
     pagamento = pagamentos.first
     expect(pagamento.sequencial).to eql('000002')
   end

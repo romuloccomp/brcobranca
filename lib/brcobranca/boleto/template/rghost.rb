@@ -102,7 +102,6 @@ module Brcobranca
           fail 'Não foi possível encontrar o template. Verifique o caminho' unless File.exist?(template_path)
 
           boletos.each_with_index do |boleto, index|
-
             modelo_generico_template(doc, boleto, template_path)
             modelo_generico_cabecalho(doc, boleto)
             modelo_generico_rodape(doc, boleto)
@@ -111,7 +110,6 @@ module Brcobranca
             doc.barcode_interleaved2of5(boleto.codigo_barras, width: '10.3 cm', height: '1.3 cm', x: '0.7 cm', y: '5.8 cm') if boleto.codigo_barras
             # Cria nova página se não for o último boleto
             doc.next_page unless index == boletos.length - 1
-
           end
           # Gerando stream
           formato = (options.delete(:formato) || Brcobranca.configuration.formato)
@@ -135,11 +133,11 @@ module Brcobranca
           # LOGOTIPO do BANCO
           doc.image(boleto.logotipo, x: '0.5 cm', y: '23.85 cm', zoom: 80)
           # Dados
-          doc.moveto x: '5.2 cm', y: '23.85 cm'
+          doc.moveto x: '5.2 cm', y: '23.9 cm'
           doc.show "#{boleto.banco}-#{boleto.banco_dv}", tag: :grande
-          doc.moveto x: '7.5 cm', y: '23.85 cm'
+          doc.moveto x: '7.5 cm', y: '23.9 cm'
           doc.show boleto.codigo_barras.linha_digitavel, tag: :grande
-          doc.moveto x: '0.7 cm', y: '23 cm'
+          doc.moveto x: '0.7 cm', y: '23.0 cm'
           doc.show boleto.cedente
           doc.moveto x: '11 cm', y: '23 cm'
           doc.show boleto.agencia_conta_boleto
@@ -157,9 +155,9 @@ module Brcobranca
           doc.show boleto.nosso_numero_boleto
           doc.moveto x: '16.5 cm', y: '22.2 cm'
           doc.show boleto.valor_documento.to_currency
-          doc.moveto x: '1.4 cm', y: '20.9 cm'
+          doc.moveto x: '1.5 cm', y: '20.9 cm'
           doc.show "#{boleto.sacado} - #{boleto.sacado_documento.formata_documento}"
-          doc.moveto x: '1.4 cm', y: '20.6 cm'
+          doc.moveto x: '1.5 cm', y: '20.6 cm'
           doc.show "#{boleto.sacado_endereco}"
           # FIM Primeira parte do BOLETO
         end
@@ -169,16 +167,22 @@ module Brcobranca
           # INICIO Segunda parte do BOLETO BB
           # LOGOTIPO do BANCO
           doc.image(boleto.logotipo, x: '0.5 cm', y: '16.8 cm', zoom: 80)
-          doc.moveto x: '5.2 cm', y: '16.8 cm'
+          doc.moveto x: '5.2 cm', y: '16.9 cm'
           doc.show "#{boleto.banco}-#{boleto.banco_dv}", tag: :grande
-          doc.moveto x: '7.5 cm', y: '16.8 cm'
+          doc.moveto x: '7.5 cm', y: '16.9 cm'
           doc.show boleto.codigo_barras.linha_digitavel, tag: :grande
           doc.moveto x: '0.7 cm', y: '16 cm'
           doc.show boleto.local_pagamento
           doc.moveto x: '16.5 cm', y: '16 cm'
           doc.show boleto.data_vencimento.to_s_br if boleto.data_vencimento
           doc.moveto x: '0.7 cm', y: '15.2 cm'
-          doc.show boleto.cedente
+          if boleto.cedente_endereco
+            doc.show boleto.cedente_endereco
+            doc.moveto x: '1.9 cm', y: '15.5 cm'
+            doc.show boleto.cedente
+          else
+            doc.show boleto.cedente
+          end
           doc.moveto x: '16.5 cm', y: '15.2 cm'
           doc.show boleto.agencia_conta_boleto
           doc.moveto x: '0.7 cm', y: '14.4 cm'
@@ -194,11 +198,15 @@ module Brcobranca
           doc.moveto x: '16.5 cm', y: '14.4 cm'
           doc.show boleto.nosso_numero_boleto
           doc.moveto x: '4.4 cm', y: '13.5 cm'
-          doc.show boleto.carteira
+          if boleto.variacao
+            doc.show "#{boleto.carteira}-#{boleto.variacao}"
+          else
+            doc.show boleto.carteira
+          end
           doc.moveto x: '6.4 cm', y: '13.5 cm'
           doc.show boleto.especie
-          doc.moveto x: '8 cm', y: '13.5 cm'
-          doc.show boleto.quantidade
+          # doc.moveto x: '8 cm', y: '13.5 cm'
+          # doc.show boleto.quantidade
           # doc.moveto :x => '11 cm' , :y => '13.5 cm'
           # doc.show boleto.valor.to_currency
           doc.moveto x: '16.5 cm', y: '13.5 cm'
@@ -216,9 +224,14 @@ module Brcobranca
           doc.moveto x: '0.7 cm', y: '10.7 cm'
           doc.show boleto.instrucao6
           doc.moveto x: '1.2 cm', y: '8.8 cm'
-          doc.show "#{boleto.sacado} - #{boleto.sacado_documento.formata_documento}" if boleto.sacado && boleto.sacado_documento
+          doc.show "#{boleto.sacado} - CPF/CNPJ: #{boleto.sacado_documento.formata_documento}" if boleto.sacado && boleto.sacado_documento
           doc.moveto x: '1.2 cm', y: '8.4 cm'
           doc.show "#{boleto.sacado_endereco}"
+
+          if boleto.avalista && boleto.avalista_documento
+            doc.moveto x: '2.4 cm', y: '7.47 cm'
+            doc.show "#{boleto.avalista} - #{boleto.avalista_documento}"
+          end
           # FIM Segunda parte do BOLETO
         end
       end # Base

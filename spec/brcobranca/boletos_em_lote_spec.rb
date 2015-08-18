@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
 require 'spec_helper'
 
-describe 'Muúltiplos boletos' do #:nodoc:[all]
-
-  before(:each) do
+RSpec.describe 'Muúltiplos boletos' do #:nodoc:[all]
+  before do
     @valid_attributes = {
       especie_documento: 'DM',
       moeda: '9',
@@ -42,5 +41,4 @@ describe 'Muúltiplos boletos' do #:nodoc:[all]
       expect(File.exist?(tmp_file.path)).to be_falsey
     end
   end
-
 end

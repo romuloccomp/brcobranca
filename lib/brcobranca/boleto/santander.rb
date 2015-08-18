@@ -15,9 +15,7 @@ module Brcobranca
       # Nova instancia do Santander
       # @param (see Brcobranca::Boleto::Base#initialize)
       def initialize(campos = {})
-        campos = { carteira: '102',
-                   conta_corrente: '00000' # Obrigatória na classe base
-                  }.merge!(campos)
+        campos = { carteira: '102' }.merge!(campos)
         super(campos)
       end
 
@@ -26,6 +24,12 @@ module Brcobranca
       # @return [String] 3 caracteres numéricos.
       def banco
         '033'
+      end
+
+      # Número da conta corrente
+      # @return [String] 9 caracteres numéricos.
+      def conta_corrente=(valor)
+        @conta_corrente = valor.to_s.rjust(9, '0') if valor
       end
 
       # Número do convênio/contrato do cliente junto ao banco. No Santander, é
@@ -51,7 +55,10 @@ module Brcobranca
       # @return [String] 1 caracteres numéricos.
       def nosso_numero_dv
         nosso_numero = numero_documento.to_s.rjust(12, '0') unless numero_documento.nil?
-        nosso_numero.modulo11_2to9
+        nosso_numero.modulo11(
+          multiplicador: (2..9).to_a,
+          mapeamento: { 10 => 0, 11 => 0 }
+        ) { |total| 11 - (total % 11) }
       end
 
       # Nosso número para exibir no boleto.
@@ -81,7 +88,7 @@ module Brcobranca
       #
       # @return [String] 25 caracteres numéricos.
       def codigo_barras_segunda_parte
-        "9#{convenio}00000#{numero_documento}0#{carteira}"
+        "9#{convenio}0000#{numero_documento}#{nosso_numero_dv}0#{carteira}"
       end
     end
   end

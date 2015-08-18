@@ -28,8 +28,6 @@ module Brcobranca
           carteira: "#{MODALIDADE_COBRANCA[:sem_registro]}#{EMISSAO_BOLETO[:cedente]}"
         }.merge!(campos)
 
-        campos.merge!(convenio: campos[:convenio].rjust(6, '0')) if campos[:convenio]
-        campos.merge!(numero_documento: campos[:numero_documento].rjust(15, '0')) if campos[:numero_documento]
         campos.merge!(local_pagamento: 'PREFERENCIALMENTE NAS CASAS LOTÉRICAS ATÉ O VALOR LIMITE')
 
         super(campos)
@@ -48,6 +46,18 @@ module Brcobranca
         '0'
       end
 
+      # Número do convênio/contrato do cliente junto ao banco.
+      # @return [String] 6 caracteres numéricos.
+      def convenio=(valor)
+        @convenio = valor.to_s.rjust(6, '0') if valor
+      end
+
+      # Número seqüencial utilizado para identificar o boleto.
+      # @return [String] 15 caracteres numéricos.
+      def numero_documento=(valor)
+        @numero_documento = valor.to_s.rjust(15, '0') if valor
+      end
+
       # Nosso número, 17 dígitos
       #  1 à 2: carteira
       #  3 à 17: campo_livre
@@ -60,7 +70,10 @@ module Brcobranca
       # Utiliza-se o [-1..-1] para retornar o último caracter
       # @return [String]
       def nosso_numero_dv
-        "#{carteira}#{numero_documento}".modulo11_2to9_caixa.to_s
+        "#{carteira}#{numero_documento}".modulo11(
+          multiplicador: (2..9).to_a,
+          mapeamento: { 10 => 0, 11 => 0 }
+        ) { |total| 11 - (total % 11) }.to_s
       end
 
       # Número da agência/código cedente do cliente para exibir no boleto.
@@ -74,7 +87,10 @@ module Brcobranca
       # Dígito verificador do convênio ou código do cedente
       # @return [String]
       def convenio_dv
-        "#{convenio.modulo11_2to9_caixa}"
+        convenio.modulo11(
+          multiplicador: (2..9).to_a,
+          mapeamento: { 10 => 0, 11 => 0 }
+        ) { |total| 11 - (total % 11) }.to_s
       end
 
       # Monta a segunda parte do código de barras.
@@ -96,7 +112,11 @@ module Brcobranca
         "#{nosso_numero_boleto[1..1]}" \
         "#{nosso_numero_boleto[8..16]}"
 
-        "#{campo_livre}#{campo_livre.modulo11_2to9_caixa}"
+        "#{campo_livre}" +
+          campo_livre.modulo11(
+            multiplicador: (2..9).to_a,
+            mapeamento: { 10 => 0, 11 => 0 }
+          ) { |total| 11 - (total % 11) }.to_s
       end
     end
   end

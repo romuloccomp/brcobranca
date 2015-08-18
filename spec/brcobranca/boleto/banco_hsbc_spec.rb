@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
 require 'spec_helper'
 
-describe Brcobranca::Boleto::Hsbc do
-
-  before(:each) do
+RSpec.describe Brcobranca::Boleto::Hsbc do
+  before do
     @valid_attributes = {
       especie_documento: 'DM',
       moeda: '9',
@@ -39,7 +38,6 @@ describe Brcobranca::Boleto::Hsbc do
     expect(boleto_novo.valor_documento).to eql(0.0)
     expect(boleto_novo.local_pagamento).to eql('QUALQUER BANCO ATÉ O VENCIMENTO')
     expect(boleto_novo.carteira).to eql('CNR')
-
   end
 
   it 'Criar nova instancia com atributos válidos' do
@@ -208,5 +206,4 @@ describe Brcobranca::Boleto::Hsbc do
       expect(File.exist?(tmp_file.path)).to be_falsey
     end
   end
-
 end

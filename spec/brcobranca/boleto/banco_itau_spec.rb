@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 require 'spec_helper'
 
-describe Brcobranca::Boleto::Itau do
-  before(:each) do
+RSpec.describe Brcobranca::Boleto::Itau do
+  before do
     @valid_attributes = {
       especie_documento: 'DM',
       moeda: '9',
@@ -243,5 +243,4 @@ describe Brcobranca::Boleto::Itau do
       expect(File.exist?(tmp_file.path)).to be_falsey
     end
   end
-
 end

@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
 require 'spec_helper'
 
-describe 'RGhost' do
-
-  before(:each) do
+RSpec.describe 'RGhost' do
+  before do
     @valid_attributes = {
       especie_documento: 'DM',
       moeda: '9',
@@ -33,5 +32,4 @@ describe 'RGhost' do
     s = `#{RGhost::Config::GS[:path]} --version`
     expect(s).to match(/[8-9]\.[0-9]/)
   end
-
 end
