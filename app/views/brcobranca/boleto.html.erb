@@ -8,7 +8,7 @@
 <body id="<%= boleto.classe %>">
 
     <div id="container">
-    
+
         <div id="dados_vendedor">
         </div>
 
@@ -200,7 +200,9 @@
             </div>
             <div id="codigo_barras">
                 <div>
-                    <label>Sacador/Avalista</label>
+                    <% if boleto.avalista && boleto.avalista_documento %>
+                    <label>Sacador/Avalista</label> <%= "#{boleto.avalista} - #{boleto.avalista_documento}" %>
+                    <% end %>
                     <img src="data:image/gif;base64,<%= imagem_codigo_barras64 %>"/>
                 </div>
                 <div>

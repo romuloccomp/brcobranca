@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Boleto Bancário</title>
+    <%= wicked_pdf_stylesheet_link_tag 'carne', media: 'all' %>
+    <%#= stylesheet_link_tag 'carne', media: 'all' %>
+</head>
+
+<body id="<%= boleto.classe %>" class="modelo_carne">
+
+    <% content_for(:bol) do %>
+
+    <div id="container">
+
+        <div id="recibo">
+            <div class="recibo_linha">
+                <div class="titulo-principal">Recibo do Sacado</div>
+            </div>
+            <div class="recibo_linha">
+                <div class="titulo">Nosso Número</div>
+                <div class="valor"><%= boleto.nosso_numero_boleto %></div>
+            </div>
+            <div class="recibo_linha">
+                <div class="titulo">Agência / Código cedente</div>
+                <div class="valor"><%= boleto.agencia_conta_boleto %></div>
+            </div>
+            <div class="recibo_linha">
+                <div class="titulo">Vencimento</div>
+                <div class="valor"><%= boleto.data_vencimento.try(:to_s_br) %></div>
+            </div>
+            <div class="recibo_linha">
+                <div class="titulo">Valor</div>
+                <div class="valor"><%= boleto.valor_documento.to_currency %></div>
+            </div>
+            <div class="recibo_linha">
+                <div class="titulo">Valor cobrado</div>
+                <div class="valor">200</div>
+            </div>
+            <div class="recibo_linha nome-sacado">
+                <div class="titulo">Sacado</div>
+                <div class="valor nome"><%= boleto.sacado %></div>
+            </div>
+        </div>
+
+        <div id="ficha_compensacao">
+            <div class="cabecalho">
+                <div class="banco_logo "><%= wicked_pdf_image_tag boleto.logotipo_png %></div>
+                <div class="banco_codigo "><%= "#{boleto.banco}-#{boleto.banco_dv}" %></div>
+                <div class="linha_digitavel  last"><%= boleto.codigo_barras.linha_digitavel %></div>
+            </div>
+            <div id="colunaprincipal">
+                <div class="local_pagamento item">
+                   <label>Local de Pagamento</label>
+                   <%= boleto.local_pagamento %>
+                </div>
+                <div class="cedente item">
+                   <label>Cedente </label>
+                   <%= boleto.cedente %>
+                </div>
+                <div class="linha">
+                    <div class="data_doc item">
+                        <label>Data do documento</label>
+                        <%= boleto.data_documento.try(:to_s_br) %>
+                    </div>
+                    <div class="num_doc item">
+                        <label>Número do documento</label>
+                        <%= boleto.numero_documento %>
+                    </div>
+                    <div class="espec_doc item">
+                        <label>Espécie Doc.</label>
+                        <%= boleto.especie_documento %>
+                    </div>
+                    <div class="aceite item">
+                        <label>Aceite</label>
+                        <%= boleto.aceite %>
+                    </div>
+                    <div class="dt_proc item">
+                        <label>Data proc</label>
+                        <%= boleto.data_processamento.try(:to_s_br) %>
+                    </div>
+                </div>
+                <div class="linha">
+                    <div class="uso_banco item">
+                        <label>Uso do Banco</label>
+                    </div>
+                    <div class="carteira item">
+                        <label>Carteira</label>
+                        <%= boleto.carteira %>
+                    </div>
+                    <div class="moeda item">
+                        <label>Moeda</label>
+                        R$
+                    </div>
+                    <div class="qtd item">
+                        <label>Quantidade</label>
+                        <%= boleto.quantidade %>
+                    </div>
+                    <div class="valor item">
+                        <label>(x) Valor</label>
+                        <%= boleto.valor.to_currency %>
+                    </div>
+                </div>
+                <div class="mensagens ">
+                    <label>Instruções (Texto de responsabilidade do cedente)</label>
+                    <%= boleto.instrucoes.html_safe %>
+                </div>
+            </div>
+            <div id="colunadireita">
+                <div>
+                   <label>Vencimento</label>
+                   <%= boleto.data_vencimento.try(:to_s_br) %>
+                </div>
+                <div>
+                   <label>Agência / Código cedente </label>
+                   <%= boleto.agencia_conta_boleto %>
+                </div>
+                <div>
+                   <label>Nosso número</label>
+                   <%= boleto.nosso_numero_boleto %>
+                </div>
+                <div>
+                   <label>(=) Valor do documento</label>
+                   <%= boleto.valor_documento.to_currency %>
+                </div>
+                <div>
+                   <label>(-) Desconto/Abatimento</label>
+                </div>
+                <div>
+                   <label>(-) Outras deduções</label>
+                </div>
+                <div>
+                   <label>(+) Mora/Multa</label>
+                </div>
+                <div>
+                   <label>(+) Outros Acréscimos</label>
+                </div>
+                <div>
+                   <label>(=) Valor cobrado</label>
+                </div>
+            </div>
+            <div id="sacado">
+                <div>
+                    <label>Sacado</label>
+                    <%= "#{boleto.sacado} - #{boleto.sacado_documento.formata_documento}<br/>".html_safe if boleto.sacado && boleto.sacado_documento %>
+                    <%= boleto.sacado_endereco.html_safe %>
+                </div>
+            </div>
+            <div id="codigo_barras">
+                <div>
+                    <% if boleto.avalista && boleto.avalista_documento %>
+                    <label>Sacador/Avalista</label> <%= "#{boleto.avalista} - #{boleto.avalista_documento}" %>
+                    <% end %>
+                    <img src="data:image/gif;base64,<%= imagem_codigo_barras64 %>"/>
+                </div>
+                <div>
+                    <span>Ficha de Compensação</span>
+                    <label>Autenticação Mecânica</label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <% end %>
+
+
+    <%= yield(:bol) %>
+    <%= yield(:bol) %>
+    <%= yield(:bol) %>
+
+    <div class="quebra_de_pagina"></div>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <!-- <div style="page-break-after:always;"></div> -->
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <!-- <div style="page-break-after:always;"></div> -->
+
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+    <%#= yield(:bol) %>
+
+    <%#= yield(:bol) %>
+
+</body>
+</html>

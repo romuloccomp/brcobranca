@@ -12,11 +12,11 @@ module Brcobranca
         extend self
 
         def to(formato, options = {})
-          barcode = Barby::Code25Interleaved.new(self.codigo_barras) 
+          barcode = Barby::Code25Interleaved.new(self.codigo_barras)
           imagem_codigo_barras64 = Base64.encode64(barcode.to_png(width: 480, height: 50, margin: 0))
-          { template: 'brcobranca/boleto.html.erb', layout: false, locals: { boleto: self, imagem_codigo_barras64: imagem_codigo_barras64 } }.merge(options)
+          { template: 'brcobranca/carne.html.erb', layout: false, locals: { boleto: self, imagem_codigo_barras64: imagem_codigo_barras64 } }.merge(options)
         end
-        
+
       end
     end
   end

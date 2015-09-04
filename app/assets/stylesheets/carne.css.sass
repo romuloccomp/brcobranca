@@ -1,0 +1,163 @@
+//=require base
+//=require bancobrasil
+//=require caixa
+
+body
+  margin: 0
+
+.quebra_de_pagina
+  page-break-after: always
+
+.cabecalho
+  margin-bottom: 2px
+
+.modelo_carne
+  width: 210mm
+  // height: 298mm
+  // border: 1px solid green
+  #container
+    width: 210mm
+    height: 99mm
+    overflow: hidden
+    float: none
+    font-size: 10px
+    box-sizing: border-box
+    padding: 20px 35px 0 30px
+    // border: 1px solid red
+
+  #recibo
+    width: 30mm
+    float: left
+    margin: 25px 0 0 0
+    padding-right: 10px
+
+    .recibo_linha
+      width: 100%
+      border-bottom: 1px solid #000
+      padding: 3px 0 5px
+      &.nome-sacado
+        border-bottom: none
+
+      div
+        width: 100%
+        clear: both
+        &.titulo-principal
+          text-align: center
+          font-size: 13px
+          font-weight: bold
+
+        &.valor
+          text-align: right
+          font-weight: bold
+          padding-top: 3px
+          &.nome
+            text-align: left
+            padding-top: 10px
+            line-height: 1.5
+
+    .titulo
+      font-size: 9px
+
+
+
+
+  #ficha_compensacao
+    width: 159mm
+    float: left
+    margin-top: 0
+    box-sizing: border-box
+    padding-left: 10px
+    border-left: 1px dashed #000
+    // border: 1px solid green
+
+    .linha
+      width: 100%
+      box-sizing: border-box
+
+    .cedente
+      width: 100%
+      box-sizing: border-box
+
+    .cabecalho
+      width: auto
+      div
+        margin-top: 0
+        height: 20px
+      .banco_logo
+        width: 122px
+        position: relative
+        img
+          width: 100%
+          height: 27px
+          position: absolute
+          bottom: 0
+          left: 0
+
+      .banco_codigo
+        width: 55px
+        font-size: 15px
+
+      .linha_digitavel
+        width: 406px
+        font-size: 14px
+
+    #sacado
+      width: 535px
+      height: 52px
+      border: none
+      padding: 0 0 0 30px
+
+    #codigo_barras
+      width: 535px
+      height: 58px
+      padding-left: 25px
+
+      div:first-child
+        width: 400px
+      div:last-child
+        float: right
+        margin-top: 8px
+      img
+        width: 385px
+
+
+    #colunaprincipal
+      width: 111mm
+      div
+        height: 25px
+        margin: 0
+        &.mensagens
+          width: 100%
+          height: 125px
+          box-sizing: border-box
+
+      .data_doc
+        width: 80px
+
+      .num_doc
+        width: 100px
+
+      .local_pagamento
+        width: 100%
+        box-sizing: border-box
+
+      .espec_doc
+        width: 55px
+
+      .carteira
+        width: 67px
+
+      .valor
+        width: 103px
+
+    #colunadireita
+      width: 45mm
+      div
+        width: 100%
+        height: 25px
+        margin: 0
+        box-sizing: border-box
+
+    label
+      font-size: 8px
+      padding-top: 2px
