@@ -2,15 +2,16 @@
 <html>
 <head>
     <title>Boleto Bancário</title>
-    <%= wicked_pdf_stylesheet_link_tag 'carne', media: 'all' %>
-    <%#= stylesheet_link_tag 'carne', media: 'all' %>
+    <%= is_pdf ? wicked_pdf_stylesheet_link_tag('carne') : stylesheet_link_tag('carne', media: 'all') %>
 </head>
 
-<body id="<%= boleto.classe %>" class="modelo_carne">
+<body class="modelo_carne">
 
-    <% content_for(:bol) do %>
-
-    <div id="container">
+    <% boletos.each_with_index do |boleto, i| %>
+    <% if i > 0 && (i % 3) == 0 %>
+    <div class="quebra_de_pagina"></div>
+    <% end %>
+    <div class="container <%= boleto.classe %>">
 
         <div id="recibo">
             <div class="recibo_linha">
@@ -44,7 +45,7 @@
 
         <div id="ficha_compensacao">
             <div class="cabecalho">
-                <div class="banco_logo "><%= wicked_pdf_image_tag boleto.logotipo_png %></div>
+                <div class="banco_logo "><%= is_pdf ? wicked_pdf_image_tag(boleto.logotipo_png) : image_tag(boleto.logotipo_png) %></div>
                 <div class="banco_codigo "><%= "#{boleto.banco}-#{boleto.banco_dv}" %></div>
                 <div class="linha_digitavel  last"><%= boleto.codigo_barras.linha_digitavel %></div>
             </div>
@@ -150,7 +151,7 @@
                     <% if boleto.avalista && boleto.avalista_documento %>
                     <label>Sacador/Avalista</label> <%= "#{boleto.avalista} - #{boleto.avalista_documento}" %>
                     <% end %>
-                    <img src="data:image/gif;base64,<%= imagem_codigo_barras64 %>"/>
+                    <img src="data:image/gif;base64,<%= boleto.imagem_codigo_barras64 %>"/>
                 </div>
                 <div>
                     <span>Ficha de Compensação</span>
@@ -163,288 +164,6 @@
 
     <% end %>
 
-
-    <%= yield(:bol) %>
-    <%= yield(:bol) %>
-    <%= yield(:bol) %>
-
-    <div class="quebra_de_pagina"></div>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <!-- <div style="page-break-after:always;"></div> -->
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <!-- <div style="page-break-after:always;"></div> -->
-
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-    <%#= yield(:bol) %>
-
-    <%#= yield(:bol) %>
 
 </body>
 </html>

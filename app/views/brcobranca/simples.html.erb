@@ -2,19 +2,23 @@
 <html>
 <head>
     <title>Boleto Bancário</title>
-    <%= stylesheet_link_tag 'boleto', media: 'all' %>
+    <%= is_pdf ? wicked_pdf_stylesheet_link_tag('simples') : stylesheet_link_tag('simples', media: 'all') %>
 </head>
 
-<body id="<%= boleto.classe %>">
+<body>
 
-    <div id="container">
+    <% boletos.each_with_index do |boleto, i| %>
+    <% if i > 0 %>
+    <div class="quebra_de_pagina"></div>
+    <% end %>
+    <div class="container <%= boleto.classe %>">
 
         <div id="dados_vendedor">
         </div>
 
         <div id="recibo">
             <div class="cabecalho">
-                <div class="banco_logo "><%= image_tag boleto.logotipo_png %></div>
+                <div class="banco_logo "><%= is_pdf ? wicked_pdf_image_tag(boleto.logotipo_png) : image_tag(boleto.logotipo_png) %></div>
                 <div class="banco_codigo "><%= "#{boleto.banco}-#{boleto.banco_dv}" %></div>
                 <div class="linha_digitavel"><%= boleto.codigo_barras.linha_digitavel %></div>
             </div>
@@ -97,7 +101,7 @@
 
         <div id="ficha_compensacao">
             <div class="cabecalho">
-                <div class="banco_logo "><%= image_tag boleto.logotipo_png %></div>
+                <div class="banco_logo "><%= is_pdf ? wicked_pdf_image_tag(boleto.logotipo_png) : image_tag(boleto.logotipo_png) %></div>
                 <div class="banco_codigo "><%= "#{boleto.banco}-#{boleto.banco_dv}" %></div>
                 <div class="linha_digitavel  last"><%= boleto.codigo_barras.linha_digitavel %></div>
             </div>
@@ -203,7 +207,7 @@
                     <% if boleto.avalista && boleto.avalista_documento %>
                     <label>Sacador/Avalista</label> <%= "#{boleto.avalista} - #{boleto.avalista_documento}" %>
                     <% end %>
-                    <img src="data:image/gif;base64,<%= imagem_codigo_barras64 %>"/>
+                    <img src="data:image/gif;base64,<%= boleto.imagem_codigo_barras64 %>"/>
                 </div>
                 <div>
                     <span>Ficha de Compensação</span>
@@ -214,6 +218,7 @@
         </div>
 
     </div>
+    <% end %>
 
 </body>
 </html>

@@ -21,12 +21,15 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 1.9'
 
   # Gems that must be intalled for sift to work
-  gem.add_dependency 'chunky_png'
-  gem.add_dependency 'barby'
   gem.add_dependency 'rghost', '0.9.5'
   gem.add_dependency 'rghost_barcode', '~> 0.9'
   gem.add_dependency 'parseline', '~> 1.0.3'
   gem.add_dependency 'activemodel', '>= 3'
 
   gem.add_dependency 'unidecoder', '>= 1.1.2'
+
+  # dependencias para template html/pdf
+  gem.add_dependency 'wicked_pdf'
+  gem.add_dependency 'chunky_png'
+  gem.add_dependency 'barby'
 end
