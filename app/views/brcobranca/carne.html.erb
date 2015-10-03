@@ -31,11 +31,11 @@
             </div>
             <div class="recibo_linha">
                 <div class="titulo">Valor</div>
-                <div class="valor"><%= boleto.valor_documento.to_currency %></div>
+                <div class="valor"><%= number_to_currency(boleto.valor_documento, :precision => 2) %></div>
             </div>
             <div class="recibo_linha">
                 <div class="titulo">Valor cobrado</div>
-                <div class="valor">200</div>
+                <div class="valor">&nbsp;</div>
             </div>
             <div class="recibo_linha nome-sacado">
                 <div class="titulo">Sacado</div>
@@ -121,7 +121,7 @@
                 </div>
                 <div>
                    <label>(=) Valor do documento</label>
-                   <%= boleto.valor_documento.to_currency %>
+                   <%= number_to_currency(boleto.valor_documento, :precision => 2) %>
                 </div>
                 <div>
                    <label>(-) Desconto/Abatimento</label>
