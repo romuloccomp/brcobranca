@@ -108,12 +108,12 @@ module Brcobranca
           detalhe << pagamento.data_vencimento.strftime('%d%m%y')           # data do vencimento                    9[06]
           detalhe << pagamento.formata_valor                                # valor do documento                    9[13]
           detalhe << cod_banco                                              # codigo banco                          9[03]
-          detalhe << ''.rjust(5, ' ')                                       # agencia cobradora - deixar zero       9[05]
+          detalhe << ''.rjust(5, '0')                                       # agencia cobradora - deixar zero       9[05]
           detalhe << '99'                                                   # especie  do titulo                    X[02]
           detalhe << aceite                                                 # aceite (A/N)                          X[01]
           detalhe << pagamento.data_emissao.strftime('%d%m%y')              # data de emissao                       9[06]
-          detalhe << ''.rjust(2, ' ')                                       # 1a instrucao                          X[02]
-          detalhe << ''.rjust(2, ' ')                                       # 2a instrucao                          X[02]
+          detalhe << ''.rjust(2, '0')                                       # 1a instrucao - deixar zero            X[02]
+          detalhe << ''.rjust(2, '0')                                       # 2a instrucao - deixar zero            X[02]
           detalhe << pagamento.formata_valor_mora                           # valor mora ao dia                     9[13]
           detalhe << pagamento.formata_data_desconto                        # data limite para desconto             9[06]
           detalhe << pagamento.formata_valor_desconto                       # valor do desconto                     9[13]
@@ -134,7 +134,7 @@ module Brcobranca
           detalhe << '03'                                                   # quantidade de dias do prazo           9[02] *
           detalhe << ''.rjust(1, ' ')                                       # complemento do registro (brancos)     X[01]
           detalhe << sequencial.to_s.rjust(6, '0')                          # numero do registro no arquivo         9[06]
-          detalhe.upcase
+          detalhe
         end
       end
     end
