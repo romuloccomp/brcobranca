@@ -4,12 +4,6 @@ require 'spec_helper'
 RSpec.describe Brcobranca::Boleto::Caixa do #:nodoc:[all]
   before do
     @valid_attributes = {
-      especie_documento: 'DM',
-      moeda: '9',
-      data_documento: Date.today,
-      dias_vencimento: 1,
-      aceite: 'S',
-      quantidade: 1,
       valor: 10.00,
       cedente: 'PREFEITURA MUNICIPAL DE VILHENA',
       documento_cedente: '04092706000181',
@@ -30,17 +24,15 @@ RSpec.describe Brcobranca::Boleto::Caixa do #:nodoc:[all]
     expect(boleto_novo.especie).to eql('R$')
     expect(boleto_novo.moeda).to eql('9')
     expect(boleto_novo.data_documento).to eql(Date.today)
-    expect(boleto_novo.dias_vencimento).to eql(1)
-    expect(boleto_novo.data_vencimento).to eql(Date.today + 1)
+    expect(boleto_novo.data_vencimento).to eql(Date.today)
     expect(boleto_novo.aceite).to eql('S')
     expect(boleto_novo.quantidade).to eql(1)
     expect(boleto_novo.valor).to eql(0.0)
     expect(boleto_novo.valor_documento).to eql(0.0)
     expect(boleto_novo.local_pagamento).to eql('PREFERENCIALMENTE NAS CASAS LOTÉRICAS ATÉ O VALOR LIMITE')
     expect(boleto_novo.codigo_servico).to be_falsey
-    carteira = "#{Brcobranca::Boleto::Caixa::MODALIDADE_COBRANCA[:sem_registro]}" \
-               "#{Brcobranca::Boleto::Caixa::EMISSAO_BOLETO[:cedente]}"
-    expect(boleto_novo.carteira).to eql(carteira)
+    expect(boleto_novo.carteira).to eql('2')
+    expect(boleto_novo.emissao).to eql('4')
   end
 
   it 'Criar nova instancia com atributos válidos' do
@@ -80,11 +72,19 @@ RSpec.describe Brcobranca::Boleto::Caixa do #:nodoc:[all]
     expect(boleto_novo).to be_valid
   end
 
-  it 'Tamanho da carteira deve ser de 2 dígitos' do
+  it 'Tamanho da carteira deve ser de 1 dígitos' do
     boleto_novo = described_class.new @valid_attributes.merge(carteira: '145')
     expect(boleto_novo).not_to be_valid
 
-    boleto_novo = described_class.new @valid_attributes.merge(carteira: '1')
+    boleto_novo = described_class.new @valid_attributes.merge(carteira: '24')
+    expect(boleto_novo).not_to be_valid
+  end
+
+  it 'Emissao deve ser de 1 dígitos' do
+    boleto_novo = described_class.new @valid_attributes.merge(emissao: '145')
+    expect(boleto_novo).not_to be_valid
+
+    boleto_novo = described_class.new @valid_attributes.merge(emissao: '24')
     expect(boleto_novo).not_to be_valid
   end
 
@@ -101,9 +101,7 @@ RSpec.describe Brcobranca::Boleto::Caixa do #:nodoc:[all]
 
   it 'Montar nosso_numero_boleto' do
     boleto_novo = described_class.new @valid_attributes
-    expect(boleto_novo.nosso_numero_boleto).to eq("#{boleto_novo.carteira}" \
-                                              "#{boleto_novo.numero_documento}" \
-                                              "-#{boleto_novo.nosso_numero_dv}")
+    expect(boleto_novo.nosso_numero_boleto).to eq('24000000000000001-2')
   end
 
   it 'Montar agencia_conta_boleto' do
@@ -119,16 +117,14 @@ RSpec.describe Brcobranca::Boleto::Caixa do #:nodoc:[all]
     expect(boleto_novo.agencia_conta_boleto).to eql('2030/654321-9')
   end
 
-  it 'Busca logotipo do banco' do
-    boleto_novo = described_class.new
-    expect(File.exist?(boleto_novo.logotipo)).to be_truthy
-    expect(File.stat(boleto_novo.logotipo).zero?).to be_falsey
+  describe 'Busca logotipo do banco' do
+    it_behaves_like 'busca_logotipo'
   end
 
   it 'Gerar boleto nos formatos válidos com método to_' do
     @valid_attributes[:valor] = 135.00
     @valid_attributes[:data_documento] = Date.parse('2008-02-01')
-    @valid_attributes[:dias_vencimento] = 2
+    @valid_attributes[:data_vencimento] = Date.parse('2008-02-03')
     @valid_attributes[:numero_documento] = '000000077700168'
     boleto_novo = described_class.new(@valid_attributes)
     %w(pdf jpg tif png).each do |format|
@@ -146,7 +142,7 @@ RSpec.describe Brcobranca::Boleto::Caixa do #:nodoc:[all]
   it 'Gerar boleto nos formatos válidos' do
     @valid_attributes[:valor] = 135.00
     @valid_attributes[:data_documento] = Date.parse('2008-02-01')
-    @valid_attributes[:dias_vencimento] = 2
+    @valid_attributes[:data_vencimento] = Date.parse('2008-02-03')
     @valid_attributes[:numero_documento] = '000000077700168'
     boleto_novo = described_class.new(@valid_attributes)
     %w(pdf jpg tif png).each do |format|
