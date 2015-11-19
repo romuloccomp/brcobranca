@@ -14,12 +14,13 @@ module Brcobranca
         def layout(options = {})
           boletos = options.delete(:boletos) || [self]
           modelo = options.delete(:modelo) || 'simples'
+          locals = options.delete(:locals) || {}
           is_pdf = options.has_key?(:pdf)
           if is_pdf
             options[:encoding] = "UTF-8"
             options[:margin] = { top: 0, bottom:0, left: 0, right: 0 } if modelo == 'carne'
           end
-          { template: "brcobranca/#{modelo}.html.erb", layout: false, locals: { is_pdf: is_pdf, boletos: boletos } }.merge(options)
+          { template: "brcobranca/#{modelo}.html.erb", layout: false, locals: { is_pdf: is_pdf, boletos: boletos }.merge(locals) }.merge(options)
         end
 
         def imagem_codigo_barras64

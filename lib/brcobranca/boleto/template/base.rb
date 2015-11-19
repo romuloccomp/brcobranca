@@ -9,7 +9,7 @@ module Brcobranca
         def define_template(template)
           case template
           when :html
-            return Brcobranca::Boleto::Template::Html
+            return [Brcobranca::Boleto::Template::Html]
           when :rghost
             return [Brcobranca::Boleto::Template::Rghost]
           when :rghost_carne
