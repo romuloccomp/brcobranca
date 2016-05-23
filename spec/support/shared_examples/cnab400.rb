@@ -2,7 +2,7 @@
 shared_examples_for 'cnab400' do
   let(:pagamento) do
     Brcobranca::Remessa::Pagamento.new(valor: 199.9,
-      data_vencimento: Date.today,
+      data_vencimento: Date.current,
       nosso_numero: 123,
       documento_sacado: '12345678901',
       nome_sacado: 'PABLO DIEGO JOSÉ FRANCISCO DE PAULA JUAN NEPOMUCENO MARÍA DE LOS REMEDIOS CIPRIANO DE LA SANTÍSSIMA TRINIDAD RUIZ Y PICASSO',
@@ -36,11 +36,23 @@ shared_examples_for 'cnab400' do
         codigo_transmissao: '17777751042700080112',
         empresa_mae: 'SOCIEDADE BRASILEIRA DE ZOOLOGIA LTDA',
         documento_cedente: '12345678910',
+        agencia: '8888',
+        conta_corrente: '000002997',
+        digito_conta: '8',
         pagamentos: [pagamento]
       }
+    elsif subject.class == Brcobranca::Remessa::Cnab400::Sicoob
+      { carteira: '01',
+        agencia: '1234',
+        conta_corrente: '12345678',
+        digito_conta: '1',
+        empresa_mae: 'SOCIEDADE BRASILEIRA DE ZOOLOGIA LTDA',
+        documento_cedente: '12345678910',
+        convenio: '123456789',
+        pagamentos: [pagamento] }
     else
       { carteira: '123',
-        agencia: '1234',
+        agencia: '4327',
         conta_corrente: '12345',
         digito_conta: '1',
         empresa_mae: 'SOCIEDADE BRASILEIRA DE ZOOLOGIA LTDA',
@@ -70,7 +82,6 @@ shared_examples_for 'cnab400' do
     it 'informacoes devem estar posicionadas corretamente no trailer' do
       trailer = objeto.monta_trailer 3
       expect(trailer[0]).to eq '9' # identificacao registro
-      expect(trailer[1..393]).to eq ''.rjust(393, ' ') # brancos
       expect(trailer[394..399]).to eq '000003' # numero sequencial do registro
     end
   end
@@ -81,7 +92,7 @@ shared_examples_for 'cnab400' do
 
   it 'remessa deve conter os registros mais as quebras de linha' do
     remessa = objeto.gera_arquivo
-    expect(remessa.size).to eq 1204
+    expect(remessa.size).to eq 1206
 
     # registros
     expect(remessa[0..399]).to eq objeto.monta_header
@@ -96,6 +107,6 @@ shared_examples_for 'cnab400' do
     objeto.pagamentos << pagamento
     remessa = objeto.gera_arquivo
 
-    expect(remessa.size).to eq 1606
+    expect(remessa.size).to eq 1608
   end
 end

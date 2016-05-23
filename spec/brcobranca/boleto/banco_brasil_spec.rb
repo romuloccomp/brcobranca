@@ -23,8 +23,8 @@ RSpec.describe Brcobranca::Boleto::BancoBrasil do #:nodoc:[all]
     expect(boleto_novo.especie_documento).to eql('DM')
     expect(boleto_novo.especie).to eql('R$')
     expect(boleto_novo.moeda).to eql('9')
-    expect(boleto_novo.data_documento).to eql(Date.today)
-    expect(boleto_novo.data_vencimento).to eql(Date.today)
+    expect(boleto_novo.data_documento).to eql(Date.current)
+    expect(boleto_novo.data_vencimento).to eql(Date.current)
     expect(boleto_novo.aceite).to eql('S')
     expect(boleto_novo.quantidade).to eql(1)
     expect(boleto_novo.valor).to eql(0.0)
@@ -40,8 +40,8 @@ RSpec.describe Brcobranca::Boleto::BancoBrasil do #:nodoc:[all]
     expect(boleto_novo.especie_documento).to eql('DM')
     expect(boleto_novo.especie).to eql('R$')
     expect(boleto_novo.moeda).to eql('9')
-    expect(boleto_novo.data_documento).to eql(Date.today)
-    expect(boleto_novo.data_vencimento).to eql(Date.today)
+    expect(boleto_novo.data_documento).to eql(Date.current)
+    expect(boleto_novo.data_vencimento).to eql(Date.current)
     expect(boleto_novo.aceite).to eql('S')
     expect(boleto_novo.quantidade).to eql(1)
     expect(boleto_novo.valor).to eql(0.0)
@@ -194,6 +194,32 @@ RSpec.describe Brcobranca::Boleto::BancoBrasil do #:nodoc:[all]
     expect(boleto_novo.codigo_barras_segunda_parte).to eql('1238012345640420006190018')
     expect(boleto_novo.codigo_barras).to eql('00191376900000135001238012345640420006190018')
     expect(boleto_novo.codigo_barras.linha_digitavel).to eql('00191.23801 12345.640424 00061.900189 1 37690000013500')
+  end
+
+  it 'Montar código de barras para convenio de 7 digitos e nosso número de 10 e carteira 17' do
+    valid_attributes = {
+      valor: 2246.74,
+      local_pagamento: 'QUALQUER BANCO ATÉ O VENCIMENTO',
+      cedente: 'Kivanio Barbosa',
+      documento_cedente: '12345678912',
+      sacado: 'Claudio Pozzebom',
+      sacado_documento: '12345678900',
+      agencia: '3174',
+      conta_corrente: '00011672',
+      convenio: 1474166,
+      numero_documento: '0000000328',
+      carteira: '17',
+      data_documento: Date.parse('2016-07-05'),
+      data_vencimento: Date.parse('2016-07-05')
+    }
+
+    boleto_novo = described_class.new(valid_attributes)
+
+    expect(boleto_novo.codigo_barras_segunda_parte).to eql('0000001474166000000032817')
+    expect(boleto_novo.codigo_barras).to eql('00191684600002246740000001474166000000032817')
+    expect(boleto_novo.codigo_barras.linha_digitavel).to eql('00190.00009 01474.166004 00000.328179 1 68460000224674')
+    expect(boleto_novo.conta_corrente_dv).to eql(6)
+    expect(boleto_novo.nosso_numero_dv).to eql(4)
   end
 
   it 'Não permitir gerar boleto com atributos inválido' do

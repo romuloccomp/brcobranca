@@ -67,10 +67,13 @@ module Brcobranca
       attr_accessor :percentual_multa
       # <b>OPCIONAL</b>: Data para cobrança de multa
       attr_accessor :data_multa
+      # <b>OPCIONAL</b>: Número da Parcela
+      attr_accessor :parcela
 
       validates_presence_of :nosso_numero, :data_vencimento, :valor,
         :documento_sacado, :nome_sacado, :endereco_sacado,
         :cep_sacado, :cidade_sacado, :uf_sacado, message: 'não pode estar em branco.'
+      validates_length_of :uf_sacado, is: 2, message: 'deve ter 2 dígitos.'
       validates_length_of :cep_sacado, is: 8, message: 'deve ter 8 dígitos.'
       validates_length_of :cod_desconto, is: 1, message: 'deve ter 1 dígito.'
       validates_length_of :especie_titulo, is: 2, message: 'deve ter 2 dígitos.', allow_blank: true
@@ -82,7 +85,7 @@ module Brcobranca
       #
       def initialize(campos = {})
         padrao = {
-          data_emissao: Date.today,
+          data_emissao: Date.current,
           valor_mora: 0.0,
           valor_desconto: 0.0,
           valor_segundo_desconto: 0.0,
@@ -93,7 +96,8 @@ module Brcobranca
           especie_titulo: '01',
           identificacao_ocorrencia: '01',
           codigo_multa: '0',
-          percentual_multa: '0'
+          percentual_multa: 0.0,
+          parcela: '01'
         }
 
         campos = padrao.merge!(campos)
@@ -165,6 +169,16 @@ module Brcobranca
       def formata_valor_mora(tamanho = 13)
         format_value(valor_mora, tamanho)
       end
+
+      # Formata o campo valor da multa
+      #
+      # @param tamanho [Integer]
+      #   quantidade de caracteres a ser retornado
+      #
+      def formata_valor_multa(tamanho = 6)
+        format_value(percentual_multa, tamanho)
+      end
+
 
       # Formata o campo valor do desconto
       #
