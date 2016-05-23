@@ -4,7 +4,7 @@ require 'spec_helper'
 RSpec.describe Brcobranca::Remessa::Cnab400::Santander do
   let(:pagamento) do
     Brcobranca::Remessa::Pagamento.new(valor: 199.9,
-      data_vencimento: Date.today,
+      data_vencimento: Date.current,
       nosso_numero: 123,
       documento_sacado: '12345678901',
       nome_sacado: 'PABLO DIEGO JOSÉ FRANCISCO DE PAULA JUAN NEPOMUCENO MARÍA DE LOS REMEDIOS CIPRIANO DE LA SANTÍSSIMA TRINIDAD RUIZ Y PICASSO',
@@ -19,6 +19,9 @@ RSpec.describe Brcobranca::Remessa::Cnab400::Santander do
       codigo_transmissao: '17777751042700080112',
       empresa_mae: 'SOCIEDADE BRASILEIRA DE ZOOLOGIA LTDA',
       documento_cedente: '12345678910',
+      agencia: '8888',
+      conta_corrente: '000002997',
+      digito_conta: '8',
       pagamentos: [pagamento]
     }
   end
@@ -30,6 +33,12 @@ RSpec.describe Brcobranca::Remessa::Cnab400::Santander do
         object = subject.class.new(params.merge!(carteira: nil))
         expect(object.invalid?).to be true
         expect(object.errors.full_messages).to include('Carteira não pode estar em branco.')
+      end
+
+      it 'deve ser invalido' do
+        object = subject.class.new
+        expect(object.invalid?).to be true
+        expect(object.errors.full_messages).to eq(["Pagamentos não pode estar em branco.", "Pagamentos deve ser uma coleção (Array).", "Empresa mae não pode estar em branco.", "Documento cedente não pode estar em branco.", "Documento cedente deve ter entre 11 e 14 dígitos.", "Codigo transmissao não pode estar em branco.", "Agencia não pode estar em branco.", "Conta corrente não pode estar em branco.", "Digito conta não pode estar em branco."])
       end
 
       it 'deve ser invalido se a carteira tiver mais de 3 digitos' do
@@ -78,8 +87,12 @@ RSpec.describe Brcobranca::Remessa::Cnab400::Santander do
       expect(nome_banco.strip).to eq 'SANTANDER'
     end
 
-    it 'complemento deve retornar 294 caracteres' do
-      expect(santander.complemento.size).to eq 294
+    it 'complemento deve retornar 275 caracteres' do
+      expect(santander.complemento.size).to eq 275
+    end
+
+    it 'complemento zeros deve retornar 16 caracteres' do
+      expect(santander.complemento_zeros.size).to eq 16
     end
 
     it 'info_conta deve retornar com 20 posicoes as informacoes da conta' do
@@ -106,10 +119,25 @@ RSpec.describe Brcobranca::Remessa::Cnab400::Santander do
       it 'informacoes devem estar posicionadas corretamente no detalhe' do
         detalhe = santander.monta_detalhe pagamento, 1
         expect(detalhe[62..69]).to eq '00000123' # nosso numero
-        expect(detalhe[120..125]).to eq Date.today.strftime('%d%m%y') # data de vencimento
+        expect(detalhe[120..125]).to eq Date.current.strftime('%d%m%y') # data de vencimento
         expect(detalhe[126..138]).to eq '0000000019990' # valor do titulo
         expect(detalhe[220..233]).to eq '00012345678901' # documento do pagador
         expect(detalhe[234..263]).to eq 'PABLO DIEGO JOSE FRANCISCO DE ' # nome do pagador
+      end
+    end
+
+    context 'trailer' do
+      it 'trailer deve ter 400 posicoes' do
+        expect(santander.monta_trailer(1).size).to eq 400
+      end
+
+      it 'informacoes devem estar posicionadas corretamente no trailer' do
+        trailer = santander.monta_trailer 3
+        expect(trailer[0]).to eq '9' # identificacao registro
+        expect(trailer[1..6]).to eq '000003' # numero de linhas
+        expect(trailer[7..19]).to eq '0000000019990' # valor total
+        expect(trailer[20..393]).to eq ''.rjust(374, '0') # zeros
+        expect(trailer[394..399]).to eq '000003' # numero sequencial do registro
       end
     end
 
