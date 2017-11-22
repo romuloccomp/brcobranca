@@ -83,6 +83,8 @@ module Brcobranca
       attr_accessor :avalista_documento
       # <b>OPCIONAL</b>: Endereço da pessoa que envia o boleto
       attr_accessor :cedente_endereco
+      # <b>OPCIONAL</b>: Acessa o codbarras
+      attr_accessor :codigo_barras_manual
 
       # Validações
       validates_presence_of :agencia, :conta_corrente, :moeda, :especie_documento, :especie, :aceite, :numero_documento, message: 'não pode estar em branco.'
@@ -197,6 +199,8 @@ module Brcobranca
       # @raise [Brcobranca::BoletoInvalido] Caso as informações fornecidas não sejam suficientes ou sejam inválidas.
       # @return [String] código de barras formado por 44 caracteres numéricos.
       def codigo_barras
+        return codigo_barras_manual unless codigo_barras_manual = ""
+
         fail Brcobranca::BoletoInvalido.new(self) unless self.valid?
         codigo = codigo_barras_primeira_parte # 18 digitos
         codigo << codigo_barras_segunda_parte # 25 digitos
