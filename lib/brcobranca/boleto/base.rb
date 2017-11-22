@@ -200,10 +200,14 @@ module Brcobranca
       # @return [String] código de barras formado por 44 caracteres numéricos.
       def codigo_barras
         return codigo_barras_manual unless codigo_barras_manual.nil?
-
-        fail Brcobranca::BoletoInvalido.new(self) unless self.valid?
-        codigo = codigo_barras_primeira_parte # 18 digitos
-        codigo << codigo_barras_segunda_parte # 25 digitos
+        #RSP
+        #fail Brcobranca::BoletoInvalido.new(self) unless self.valid?
+        if codigo_barras_manual.nil?
+          codigo = codigo_barras_primeira_parte # 18 digitos
+          codigo << codigo_barras_segunda_parte # 25 digitos
+        else
+          codigo = codigo_barras_manual
+        end
         if codigo =~ /^(\d{4})(\d{39})$/
 
           codigo_dv = codigo.modulo11(

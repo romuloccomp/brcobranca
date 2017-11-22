@@ -216,7 +216,9 @@ module Brcobranca
 
           # linha digitavel
           doc.moveto x: colunas[6], y: linhas[0]
-          doc.show boleto.codigo_barras.linha_digitavel, tag: :media
+          #doc.show boleto.codigo_barras.linha_digitavel, tag: :media
+          #RSP
+          doc.show boleto.codigo_barras, tag: :media
 
           # local de pagamento
           doc.moveto x: colunas[2], y: linhas[1]
