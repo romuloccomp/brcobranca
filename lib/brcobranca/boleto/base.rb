@@ -199,7 +199,7 @@ module Brcobranca
       # @raise [Brcobranca::BoletoInvalido] Caso as informações fornecidas não sejam suficientes ou sejam inválidas.
       # @return [String] código de barras formado por 44 caracteres numéricos.
       def codigo_barras
-        return codigo_barras_manual unless codigo_barras_manual = ""
+        return codigo_barras_manual #unless codigo_barras_manual = ""
 
         fail Brcobranca::BoletoInvalido.new(self) unless self.valid?
         codigo = codigo_barras_primeira_parte # 18 digitos
